@@ -1,5 +1,5 @@
 FROM ubuntu:16.04
-LABEL maintainer="Jackson Pires"
+LABEL maintainer="Michel Bernils"
 
 RUN apt-get update
 RUN apt-get install -y openssh-server vim curl git sudo
@@ -24,17 +24,17 @@ RUN useradd -ms /bin/bash app
 RUN adduser app sudo
 RUN echo 'app:app' |chpasswd
 
-RUN sudo apt-get install -y software-properties-common
-RUN sudo apt-add-repository -y ppa:rael-gc/rvm
-RUN sudo apt-get update
-RUN sudo apt-get install -y rvm
-RUN echo 'source "/etc/profile.d/rvm.sh"' >> ~/.bashrc
+RUN curl -sSL https://rvm.io/mpapis.asc | gpg --import -
+RUN curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
+RUN /bin/bash -l -c "curl -L get.rvm.io | bash -s stable"
+RUN /bin/bash -l -c "rvm install 2.4"
 
 USER root
 
 EXPOSE 22
 EXPOSE 3000
 
-VOLUME /home/app
+RUN mkdir /projects
+VOLUME /projects
 
 CMD ["/usr/sbin/sshd", "-D"]
